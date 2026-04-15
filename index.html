@@ -21,6 +21,12 @@ box-shadow:0 5px 20px rgba(0,0,0,0.1);
 
 <body>
 
+<!-- اختبار -->
+<button onclick="testJS()" class="btn btn-dark" style="position:fixed;top:10px;left:10px;z-index:9999">
+اختبار
+</button>
+
+<!-- تسجيل الدخول -->
 <div id="authBox">
 <h3>تسجيل الدخول</h3>
 <input id="email" class="form-control mb-2" placeholder="Email">
@@ -30,6 +36,7 @@ box-shadow:0 5px 20px rgba(0,0,0,0.1);
 <button class="btn btn-success w-100" onclick="signup()">إنشاء حساب</button>
 </div>
 
+<!-- التطبيق -->
 <div id="app" style="display:none">
 
 <nav class="navbar navbar-dark bg-primary p-3">
@@ -56,15 +63,22 @@ box-shadow:0 5px 20px rgba(0,0,0,0.1);
 </div>
 
 <!-- مكتبة صحيحة -->
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
+
+// اختبار JavaScript
+function testJS(){
+  alert("JavaScript شغال ✅");
+}
+
+// اتصال Supabase
 const supabase = window.supabase.createClient(
   "https://nbwpawotguxrgsfpqzwg.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5id3Bhd290Z3V4cmdzZnBxendnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMDY5NDEsImV4cCI6MjA5MTc4Mjk0MX0.z3jPqnTrciajQy9jVzIAN95RCqJjQPIZQGIuM34kNKM"
 );
 
-// signup
+// إنشاء حساب
 async function signup(){
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
@@ -77,13 +91,13 @@ async function signup(){
   const { error } = await supabase.auth.signUp({ email, password });
 
   if(error){
-    alert(error.message);
+    alert("❌ " + error.message);
   }else{
-    alert("تم إنشاء الحساب ✅");
+    alert("✅ تم إنشاء الحساب");
   }
 }
 
-// login
+// تسجيل دخول
 async function login(){
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
@@ -91,17 +105,17 @@ async function login(){
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if(error){
-    alert(error.message);
+    alert("❌ " + error.message);
   }
 }
 
-// logout
+// تسجيل خروج
 async function logout(){
   await supabase.auth.signOut();
   location.reload();
 }
 
-// session
+// حالة المستخدم
 supabase.auth.onAuthStateChange((event, session) => {
   if(session){
     document.getElementById("authBox").style.display="none";
@@ -112,7 +126,7 @@ supabase.auth.onAuthStateChange((event, session) => {
   }
 });
 
-// nav
+// التنقل
 function openCourse(id){
   document.getElementById("home").style.display="none";
   document.querySelectorAll(".course-page").forEach(e=>e.classList.remove("active"));
@@ -123,6 +137,7 @@ function backHome(){
   document.getElementById("home").style.display="block";
   document.querySelectorAll(".course-page").forEach(e=>e.classList.remove("active"));
 }
+
 </script>
 
 </body>
