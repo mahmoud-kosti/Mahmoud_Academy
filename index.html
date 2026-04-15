@@ -1,16 +1,103 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>Test</title>
+<title>Mahmoud Technology</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body{font-family:Arial;background:#f4f6f9}
+#authBox{
+max-width:400px;margin:100px auto;background:#fff;
+padding:30px;border-radius:15px;text-align:center;
+box-shadow:0 5px 20px rgba(0,0,0,0.1);
+}
+.hidden{display:none;}
+</style>
 </head>
+
 <body>
 
-<h1>TEST PAGE</h1>
+<div id="authBox">
+<h3>تسجيل الدخول</h3>
+<input id="email" class="form-control mb-2" placeholder="Email">
+<input id="password" type="password" class="form-control mb-2" placeholder="Password">
 
-<button onclick="alert('OK JS شغال')">
-اختبار
-</button>
+<button class="btn btn-primary w-100 mb-2" onclick="login()">دخول</button>
+<button class="btn btn-success w-100" onclick="signup()">إنشاء حساب</button>
+
+<p id="msg" style="color:red"></p>
+</div>
+
+<div id="app" class="hidden">
+
+<h2>Welcome 🎉</h2>
+<button onclick="logout()">خروج</button>
+
+</div>
+
+<!-- Supabase CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+console.log("JS OK");
+
+let supabase = null;
+
+try {
+  supabase = window.supabase.createClient(
+    "https://nbwpawotguxrgsfpqzwg.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5id3Bhd290Z3V4cmdzZnBxendnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMDY5NDEsImV4cCI6MjA5MTc4Mjk0MX0.z3jPqnTrciajQy9jVzIAN95RCqJjQPIZQGIuM34kNKM"
+  );
+  console.log("Supabase Connected");
+} catch (e) {
+  console.log("Supabase Error", e);
+}
+
+// signup
+async function signup(){
+  if(!supabase) return alert("Supabase not ready");
+
+  const email = emailInput().value;
+  const password = passInput().value;
+
+  const { error } = await supabase.auth.signUp({ email, password });
+
+  if(error){
+    showMsg(error.message);
+  } else {
+    showMsg("تم إنشاء الحساب ✅");
+  }
+}
+
+// login
+async function login(){
+  if(!supabase) return alert("Supabase not ready");
+
+  const email = emailInput().value;
+  const password = passInput().value;
+
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+  if(error){
+    showMsg(error.message);
+  }
+}
+
+// logout
+async function logout(){
+  await supabase.auth.signOut();
+  location.reload();
+}
+
+// helpers
+function emailInput(){ return document.getElementById("email"); }
+function passInput(){ return document.getElementById("password"); }
+function showMsg(msg){ document.getElementById("msg").innerText = msg; }
+
+</script>
 
 </body>
 </html>
