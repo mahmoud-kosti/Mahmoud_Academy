@@ -51,7 +51,6 @@ button {
 <input id="name" placeholder="Name">
 <input id="email" placeholder="Email">
 <input id="password" type="password" placeholder="Password">
-<input type="file" id="file">
 <button onclick="register()">Register</button>
 
 <h3>تسجيل دخول</h3>
@@ -81,6 +80,10 @@ doc,
 setDoc
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
+/* ========================= */
+/* Firebase Config (مصحح) */
+/* ========================= */
+
 const firebaseConfig = {
 apiKey: "AIzaSyBsvF9DneR5H0JbOW4HX_JjVWaajAUgk",
 authDomain: "website-8833c.firebaseapp.com",
@@ -92,18 +95,6 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 /* ========================= */
-/* تحويل الصورة إلى Base64 */
-/* ========================= */
-
-function getBase64(file) {
-return new Promise((resolve) => {
-const reader = new FileReader();
-reader.onload = () => resolve(reader.result);
-reader.readAsDataURL(file);
-});
-}
-
-/* ========================= */
 /* تسجيل حساب */
 /* ========================= */
 
@@ -112,35 +103,28 @@ window.register = async function () {
 const name = document.getElementById("name").value;
 const email = document.getElementById("email").value;
 const password = document.getElementById("password").value;
-const file = document.getElementById("file").files[0];
 
 try {
 
-// إنشاء حساب
 const userCred = await createUserWithEmailAndPassword(auth, email, password);
 
-// إرسال تحقق بريد
+/* إرسال تحقق بريد */
 await sendEmailVerification(userCred.user);
 
-// تحويل الصورة (اختياري)
-let photo = "";
-if (file) {
-photo = await getBase64(file);
-}
-
-// حفظ المستخدم
+/* حفظ المستخدم */
 await setDoc(doc(db, "users", userCred.user.uid), {
 name: name,
 email: email,
-photo: photo
+photo: ""
 });
 
 document.getElementById("msg").innerText =
-"✔ تم التسجيل + تم إرسال رسالة التحقق";
+"✔ تم إنشاء الحساب + أرسلنا رسالة التحقق";
 
 } catch (e) {
 alert(e.message);
 }
+
 };
 
 /* ========================= */
@@ -156,19 +140,20 @@ try {
 
 const userCred = await signInWithEmailAndPassword(auth, email, pass);
 
-// منع غير المتحقق
+/* منع غير المفعّل */
 if (!userCred.user.emailVerified) {
-alert("❌ يجب تأكيد البريد الإلكتروني أولاً");
+alert("❌ يجب تأكيد البريد الإلكتروني");
 await signOut(auth);
 return;
 }
 
-// تحويل للبروفايل
+/* تحويل للبروفايل */
 window.location.href = "profile.html?uid=" + userCred.user.uid;
 
 } catch (e) {
 alert(e.message);
 }
+
 };
 
 </script>
