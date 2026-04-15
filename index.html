@@ -3,8 +3,77 @@
 <head>
   <meta charset="UTF-8">
   <title>Login System</title>
+  <style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
+}
+
+.navbar {
+  background: #020617;
+  padding: 15px;
+  text-align: center;
+  font-size: 20px;
+  border-bottom: 1px solid #1e293b;
+}
+
+.container {
+  max-width: 500px;
+  margin: auto;
+  padding: 15px;
+}
+
+.post-box {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.post-box input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #1e293b;
+  color: white;
+}
+
+.post-box button {
+  padding: 12px;
+  border: none;
+  background: #3b82f6;
+  color: white;
+  border-radius: 10px;
+}
+
+.post {
+  background: #020617;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 15px;
+}
+
+.email {
+  font-size: 12px;
+  color: #94a3b8;
+}
+</style>
 </head>
 <body>
+  <div class="navbar">🔥 My Social App</div>
+
+<div class="container">
+
+  <div class="post-box">
+    <input type="text" id="postInput" placeholder="اكتب حاجة...">
+    <button onclick="addPost()">نشر</button>
+  </div>
+
+  <div id="postsList"></div>
+
+</div>
 
 <h2>إنشاء حساب</h2>
 <input type="email" id="regEmail" placeholder="Email">
@@ -117,10 +186,14 @@ window.addPost = async function () {
   querySnapshot.forEach(doc => {
     const data = doc.data();
 
-    const li = document.createElement("li");
-    li.textContent = data.email + ": " + data.content;
+    const post = `
+  <div class="post">
+    <div class="email">${data.email}</div>
+    <div>${data.content}</div>
+  </div>
+`;
 
-    list.appendChild(li);
+list.innerHTML += post;
   });
 }
 
