@@ -22,6 +22,7 @@
 <p id="status"></p>
 
 <script type="module">
+  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 import { 
   getAuth, 
@@ -39,6 +40,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+  const db = getFirestore(app);
 
 // ✅ تسجيل حساب
 window.register = async function () {
@@ -46,13 +48,21 @@ window.register = async function () {
   const password = document.getElementById("regPass").value;
 
   try {
-    await createUserWithEmailAndPassword(auth, email, password);
-    alert("تم إنشاء الحساب بنجاح");
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    // ✅ حفظ المستخدم في قاعدة البيانات
+    await addDoc(collection(db, "posts"), {
+  userId: auth.currentUser.uid,
+  content: "Hello",
+  createdAt: new Date()
+});
+
+    alert("تم إنشاء الحساب وحفظه في قاعدة البيانات 🔥");
   } catch (error) {
     alert(error.message);
   }
 };
-
 // ✅ تسجيل دخول
 window.login = async function () {
   const email = document.getElementById("logEmail").value;
@@ -83,6 +93,7 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 </script>
-
+  
 </body>
+  
 </html>
