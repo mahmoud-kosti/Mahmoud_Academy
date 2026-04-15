@@ -9,94 +9,143 @@
 
 <style>
 body{font-family:Arial;background:#f4f6f9}
+
 #authBox{
-max-width:400px;margin:100px auto;background:#fff;
+max-width:420px;margin:80px auto;background:#fff;
 padding:30px;border-radius:15px;text-align:center;
 box-shadow:0 5px 20px rgba(0,0,0,0.1);
 }
-.hidden{display:none;}
+
+.hidden{display:none !important;}
+
+.status{
+margin-top:10px;
+font-size:14px;
+font-weight:600;
+}
+
+.success{color:green;}
+.error{color:red;}
+
 </style>
 </head>
 
 <body>
 
+<!-- AUTH -->
 <div id="authBox">
-<h3>تسجيل الدخول</h3>
+<h3>🔐 تسجيل الدخول</h3>
+
 <input id="email" class="form-control mb-2" placeholder="Email">
 <input id="password" type="password" class="form-control mb-2" placeholder="Password">
 
-<button class="btn btn-primary w-100 mb-2" onclick="login()">دخول</button>
-<button class="btn btn-success w-100" onclick="signup()">إنشاء حساب</button>
+<button class="btn btn-primary w-100 mb-2" onclick="signup()">إنشاء حساب</button>
+<button class="btn btn-success w-100" onclick="login()">تسجيل دخول</button>
 
-<p id="msg" style="color:red"></p>
+<div id="status" class="status"></div>
 </div>
 
+<!-- APP -->
 <div id="app" class="hidden">
 
-<h2>Welcome 🎉</h2>
-<button onclick="logout()">خروج</button>
+<nav class="navbar navbar-dark bg-primary p-3">
+<span class="text-white">Mahmoud Technology</span>
+<button class="btn btn-danger" onclick="logout()">خروج</button>
+</nav>
+
+<div class="container mt-4">
+<h3>🎉 تم تسجيل الدخول بنجاح</h3>
+<p id="userInfo"></p>
+</div>
 
 </div>
 
-<!-- Supabase CDN -->
+<!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-console.log("JS OK");
+const supabase = window.supabase.createClient(
+  "https://nbwpawotguxrgsfpqzwg.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5id3Bhd290Z3V4cmdzZnBxendnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMDY5NDEsImV4cCI6MjA5MTc4Mjk0MX0.z3jPqnTrciajQy9jVzIAN95RCqJjQPIZQGIuM34kNKM"
+);
 
-let supabase = null;
-
-try {
-  supabase = window.supabase.createClient(
-    "https://nbwpawotguxrgsfpqzwg.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5id3Bhd290Z3V4cmdzZnBxendnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMDY5NDEsImV4cCI6MjA5MTc4Mjk0MX0.z3jPqnTrciajQy9jVzIAN95RCqJjQPIZQGIuM34kNKM"
-  );
-  console.log("Supabase Connected");
-} catch (e) {
-  console.log("Supabase Error", e);
+/* ===== UI HELPERS ===== */
+function showStatus(msg, type){
+  const box = document.getElementById("status");
+  box.innerText = msg;
+  box.className = "status " + type;
 }
 
-// signup
+/* ===== SIGNUP ===== */
 async function signup(){
-  if(!supabase) return alert("Supabase not ready");
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
 
-  const email = emailInput().value;
-  const password = passInput().value;
+  if(!email || !password){
+    showStatus("❌ املأ البيانات", "error");
+    return;
+  }
 
-  const { error } = await supabase.auth.signUp({ email, password });
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password
+  });
 
   if(error){
-    showMsg(error.message);
+    showStatus("❌ " + error.message, "error");
   } else {
-    showMsg("تم إنشاء الحساب ✅");
+    showStatus("✅ تم إنشاء الحساب بنجاح", "success");
+    console.log("SIGNUP DATA:", data);
   }
 }
 
-// login
+/* ===== LOGIN ===== */
 async function login(){
-  if(!supabase) return alert("Supabase not ready");
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
 
-  const email = emailInput().value;
-  const password = passInput().value;
+  if(!email || !password){
+    showStatus("❌ املأ البيانات", "error");
+    return;
+  }
 
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
 
   if(error){
-    showMsg(error.message);
+    showStatus("❌ " + error.message, "error");
+    return;
   }
+
+  showStatus("✅ تم تسجيل الدخول", "success");
+
+  console.log("LOGIN DATA:", data);
+
+  document.getElementById("authBox").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+
+  document.getElementById("userInfo").innerText =
+    "User: " + data.user.email;
 }
 
-// logout
+/* ===== LOGOUT ===== */
 async function logout(){
   await supabase.auth.signOut();
   location.reload();
 }
 
-// helpers
-function emailInput(){ return document.getElementById("email"); }
-function passInput(){ return document.getElementById("password"); }
-function showMsg(msg){ document.getElementById("msg").innerText = msg; }
+/* ===== SESSION CHECK ===== */
+supabase.auth.onAuthStateChange((event, session) => {
+  if(session){
+    document.getElementById("authBox").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
 
+    document.getElementById("userInfo").innerText =
+      "User: " + session.user.email;
+  }
+});
 </script>
 
 </body>
