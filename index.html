@@ -135,6 +135,26 @@ const supabaseKey = "sb_publishable_SPTU7w-HXUQi3pD09uc7fA_bo2_hGxg";
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 function registerStudent(name, course){
+
+  alert("تم الضغط على الزر");
+
+  if(!name){
+    alert("اكتب اسمك");
+    return;
+  }
+
+  supabase.from("students").insert([
+    { name: name, course: course }
+  ])
+  .then((res) => {
+    console.log(res);
+    alert("تم التسجيل ✅");
+  })
+  .catch((err) => {
+    console.log(err);
+    alert("في مشكلة ❌");
+  });
+}{
 if(!name){
 alert("اكتب اسمك");
 return;
