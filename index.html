@@ -32,8 +32,126 @@ cursor:pointer;
 <body>
 
 <!-- AUTH -->
-<div id="authBox" class="container mt-5" style="max-width:400px;">
-<h3 class="text-center">تسجيل / دخول</h3>
+<style>
+.auth-wrapper{
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+background:linear-gradient(135deg,#1d2b64,#f8cdda);
+font-family:Arial;
+}
+
+.auth-card{
+width:380px;
+background:rgba(255,255,255,0.15);
+backdrop-filter:blur(20px);
+border-radius:20px;
+padding:25px;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+animation:fadeIn 0.8s ease;
+}
+
+@keyframes fadeIn{
+from{transform:translateY(20px);opacity:0}
+to{transform:translateY(0);opacity:1}
+}
+
+.auth-card h3{
+text-align:center;
+color:#fff;
+margin-bottom:15px;
+}
+
+input{
+width:100%;
+padding:12px;
+margin:8px 0;
+border:none;
+border-radius:10px;
+outline:none;
+}
+
+.btn-login{
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+background:#4267B2;
+color:#fff;
+font-weight:bold;
+cursor:pointer;
+transition:0.3s;
+}
+
+.btn-login:hover{
+transform:scale(1.03);
+background:#365899;
+}
+
+.btn-signup{
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+background:#00c896;
+color:#fff;
+font-weight:bold;
+cursor:pointer;
+margin-top:8px;
+transition:0.3s;
+}
+
+.btn-signup:hover{
+transform:scale(1.03);
+background:#00a87a;
+}
+
+.switch{
+text-align:center;
+margin-top:10px;
+color:#fff;
+font-size:13px;
+cursor:pointer;
+opacity:0.8;
+}
+
+.switch:hover{
+opacity:1;
+}
+
+.toggle-dark{
+position:absolute;
+top:15px;
+right:15px;
+background:#000;
+color:#fff;
+border:none;
+padding:8px 12px;
+border-radius:10px;
+cursor:pointer;
+}
+</style>
+
+<div class="auth-wrapper">
+<button class="toggle-dark" onclick="document.body.classList.toggle('dark')">🌙</button>
+
+<div class="auth-card">
+
+<h3>Mahmoud Technology</h3>
+
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+
+<button class="btn-login" onclick="login()">تسجيل دخول</button>
+<button class="btn-signup" onclick="signUp()">إنشاء حساب</button>
+
+<div class="switch">
+منصة تعليمية احترافية
+</div>
+
+</div>
+</div>
 
 <input id="email" class="form-control mb-2" placeholder="Email">
 <input id="password" class="form-control mb-2" placeholder="Password">
