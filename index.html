@@ -121,6 +121,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
   const db = getFirestore(app);
+  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    // ❌ لو ما مسجل دخول
+    window.location.href = "login.html";
+  }
+});
 
 // ✅ تسجيل حساب
 window.register = async function () {
