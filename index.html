@@ -1,157 +1,69 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
 <meta charset="UTF-8">
-<title>Mahmoud Technology</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<style>
-body{
-margin:0;
-font-family:Arial;
-background:#f4f6f9;
-}
-
-/* AUTH */
-.auth-wrapper{
-height:100vh;
-display:flex;
-align-items:center;
-justify-content:center;
-background:linear-gradient(135deg,#1d2b64,#f8cdda);
-}
-
-.auth-card{
-width:360px;
-background:rgba(255,255,255,0.2);
-backdrop-filter:blur(15px);
-padding:25px;
-border-radius:20px;
-box-shadow:0 10px 30px rgba(0,0,0,0.2);
-text-align:center;
-}
-
-input{
-width:100%;
-padding:12px;
-margin:8px 0;
-border:none;
-border-radius:10px;
-outline:none;
-}
-
-button{
-width:100%;
-padding:12px;
-border:none;
-border-radius:10px;
-cursor:pointer;
-margin-top:8px;
-font-weight:bold;
-}
-
-.login{background:#4267B2;color:#fff}
-.signup{background:#00c896;color:#fff}
-
-/* APP */
-#appBox{display:none;text-align:center}
-
-.hero{
-background:linear-gradient(135deg,#0d6efd,#0a58ca);
-color:#fff;
-padding:40px;
-}
-
-.course{
-background:#fff;
-margin:10px;
-padding:15px;
-border-radius:10px;
-}
-</style>
+<title>Firebase Fixed</title>
 </head>
 
 <body>
 
-<!-- AUTH -->
-<div id="authBox" class="auth-wrapper">
-
-<div class="auth-card">
-<h3>Mahmoud Technology</h3>
+<h2>Login Test</h2>
 
 <input id="email" placeholder="Email">
 <input id="password" type="password" placeholder="Password">
 
-<button class="login" onclick="login()">تسجيل دخول</button>
-<button class="signup" onclick="signUp()">إنشاء حساب</button>
+<button onclick="signUp()">Sign Up</button>
+<button onclick="login()">Login</button>
 
-</div>
-</div>
+<p id="msg"></p>
 
-<!-- APP -->
-<div id="appBox">
-
-<div class="hero">
-<h1>Mahmoud Technology</h1>
-<p>منصة تعليمية</p>
-<button onclick="logout()" style="background:red;color:#fff;border:none;padding:10px;border-radius:10px;">
-تسجيل خروج
-</button>
-</div>
-
-<div>
-<h3>📚 الكورسات</h3>
-<div class="course">أساسيات البرمجة</div>
-<div class="course">رياضيات</div>
-</div>
-
-</div>
-
-<!-- FIREBASE -->
+<!-- FIREBASE CDN (CORRECT FOR HTML) -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut }
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
+// ✅ Firebase Config (FIXED)
 const firebaseConfig = {
-  apiKey: "AIzaSyBsvF9DneR5H0JbOW4HX_JjVWaajAUgk",
+  apiKey: "AIzaSyBsvF9J_DneR5H0JbOW4HX_JjVWaajAUgk",
   authDomain: "website-8833c.firebaseapp.com",
   projectId: "website-8833c",
-  storageBucket: "website-8833c.firebasestorage.app",
+  storageBucket: "website-8833c.appspot.com",
   messagingSenderId: "831801957212",
   appId: "1:831801957212:web:707b3c8ac71fb67212bf99"
 };
 
+// INIT
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-/* SIGNUP */
-window.signUp = function(){
+// ================= SIGN UP =================
+window.signUp = function () {
 let email = document.getElementById("email").value;
 let pass = document.getElementById("password").value;
 
-createUserWithEmailAndPassword(auth,email,pass)
-.then(()=>alert("تم إنشاء الحساب"))
-.catch(e=>alert(e.message));
-}
-
-/* LOGIN */
-window.login = function(){
-let email = document.getElementById("email").value;
-let pass = document.getElementById("password").value;
-
-signInWithEmailAndPassword(auth,email,pass)
-.then(()=>{
-document.getElementById("authBox").style.display="none";
-document.getElementById("appBox").style.display="block";
+createUserWithEmailAndPassword(auth, email, pass)
+.then(() => {
+document.getElementById("msg").innerText = "تم إنشاء الحساب بنجاح";
 })
-.catch(e=>alert("خطأ في تسجيل الدخول"));
-}
+.catch((error) => {
+document.getElementById("msg").innerText = error.message;
+});
+};
 
-/* LOGOUT */
-window.logout = function(){
-signOut(auth).then(()=>location.reload());
-}
+// ================= LOGIN =================
+window.login = function () {
+let email = document.getElementById("email").value;
+let pass = document.getElementById("password").value;
+
+signInWithEmailAndPassword(auth, email, pass)
+.then(() => {
+document.getElementById("msg").innerText = "تم تسجيل الدخول بنجاح";
+})
+.catch((error) => {
+document.getElementById("msg").innerText = error.message;
+});
+};
 </script>
 
 </body>
