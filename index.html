@@ -56,7 +56,12 @@ button {
 
 <body>
 
-<div class="navbar">🔥 My Social App</div>
+<div class="navbar">
+  🔥 My Social App
+  <a href="profile.html" style="color:white; margin-left:15px;">
+    👤 Profile
+  </a>
+</div>
 
 <div class="container">
 
@@ -105,6 +110,12 @@ const firebaseConfig = {
   apiKey: "AIzaSyBsvF9J_DneR5H0JbOW4HX_JjVWaajAUgk",
   authDomain: "website-8833c.firebaseapp.com",
   projectId: "website-8833c"
+  await addDoc(collection(db, "posts"), {
+  userId: user.uid,
+  email: user.email,
+  content: content,
+  createdAt: new Date()
+});
 };
 
 const app = initializeApp(firebaseConfig);
