@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>Mahmoud Technology</title>
+<title>Mahmoud Academy</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
@@ -12,31 +12,24 @@ font-family:Arial;
 background:linear-gradient(135deg,#0d6efd,#6c5ce7);
 }
 
-/* ================= LOGIN ================= */
-.auth-card{
+/* ================= AUTH ================= */
+.auth{
 width:350px;
 background:rgba(255,255,255,0.15);
 backdrop-filter:blur(15px);
+padding:20px;
 border-radius:20px;
-padding:25px;
 color:#fff;
-box-shadow:0 10px 30px rgba(0,0,0,0.2);
 position:absolute;
-top:50%;
-left:50%;
+top:50%;left:50%;
 transform:translate(-50%,-50%);
-animation:fadeIn 0.8s ease;
-}
-
-@keyframes fadeIn{
-from{transform:translate(-50%,-40%);opacity:0;}
-to{transform:translate(-50%,-50%);opacity:1;}
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
 }
 
 input{
 width:100%;
-padding:12px;
-margin:8px 0;
+padding:10px;
+margin:6px 0;
 border:none;
 border-radius:10px;
 outline:none;
@@ -44,16 +37,16 @@ outline:none;
 
 button{
 width:100%;
-padding:12px;
-margin-top:10px;
+padding:10px;
+margin-top:8px;
 border:none;
 border-radius:10px;
 cursor:pointer;
 font-weight:bold;
 }
 
-.btn-login{background:#00b894;color:#fff;}
-.btn-signup{background:#0984e3;color:#fff;}
+.signup{background:#0984e3;color:#fff}
+.login{background:#00b894;color:#fff}
 
 /* ================= APP ================= */
 #appBox{
@@ -64,8 +57,10 @@ min-height:100vh;
 
 .header{
 background:#fff;
-padding:20px;
-text-align:center;
+padding:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
 box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
 
@@ -89,23 +84,24 @@ text-align:center;
 <body>
 
 <!-- ================= LOGIN ================= -->
-<div id="authBox" class="auth-card">
-<h2 style="text-align:center;">Mahmoud Technology</h2>
+<div class="auth" id="authBox">
+<h3 style="text-align:center;">Mahmoud Academy</h3>
 
+<input id="name" placeholder="اسم المستخدم">
 <input id="email" placeholder="Email">
 <input id="password" type="password" placeholder="Password">
 
-<button class="btn-login" onclick="login()">تسجيل دخول</button>
-<button class="btn-signup" onclick="signUp()">إنشاء حساب</button>
+<button class="signup" onclick="signUp()">إنشاء حساب</button>
+<button class="login" onclick="login()">تسجيل دخول</button>
 </div>
 
 <!-- ================= APP ================= -->
 <div id="appBox">
 
 <div class="header">
-<h2>👋 Welcome</h2>
-<button onclick="logout()" style="background:red;color:#fff;padding:10px 20px;border:none;border-radius:10px;">
-تسجيل خروج
+<h3 id="welcome">مرحباً 👋</h3>
+<button onclick="logout()" style="background:red;color:#fff;border:none;padding:8px 15px;border-radius:10px;">
+خروج
 </button>
 </div>
 
@@ -124,6 +120,9 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
+import { getFirestore, setDoc, doc, getDoc }
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyBsvF9J_DneR5H0JbOW4HX_JjVWaajAUgk",
   authDomain: "website-8833c.firebaseapp.com",
@@ -135,31 +134,45 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-// SIGN UP
-window.signUp = function(){
+// ================= SIGN UP =================
+window.signUp = async function(){
+
+let name = document.getElementById("name").value;
 let email = document.getElementById("email").value;
 let password = document.getElementById("password").value;
 
-createUserWithEmailAndPassword(auth,email,password)
-.then(()=>alert("تم إنشاء الحساب ✅"))
-.catch(e=>alert(e.message));
+let user = await createUserWithEmailAndPassword(auth,email,password);
+
+await setDoc(doc(db,"users",user.user.uid),{
+name:name,
+email:email
+});
+
+alert("تم إنشاء الحساب ✅");
 }
 
-// LOGIN
-window.login = function(){
+// ================= LOGIN =================
+window.login = async function(){
+
 let email = document.getElementById("email").value;
 let password = document.getElementById("password").value;
 
-signInWithEmailAndPassword(auth,email,password)
-.then(()=>{
+let user = await signInWithEmailAndPassword(auth,email,password);
+
+let data = await getDoc(doc(db,"users",user.user.uid));
+
 document.getElementById("authBox").style.display="none";
 document.getElementById("appBox").style.display="block";
-})
-.catch(e=>alert(e.message));
+
+if(data.exists()){
+document.getElementById("welcome").innerText =
+"مرحباً " + data.data().name;
+}
 }
 
-// LOGOUT
+// ================= LOGOUT =================
 window.logout = function(){
 signOut(auth).then(()=>location.reload());
 }
