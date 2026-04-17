@@ -1,302 +1,573 @@
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-<meta charset="UTF-8">
-<title>My Social App</title>
+import React, { useState, useEffect, useRef } from 'react';
+import { initializeApp } from 'firebase/app';
+import { 
+  getAuth, 
+  signInAnonymously, 
+  signInWithCustomToken, 
+  onAuthStateChanged,
+  signOut
+} from 'firebase/auth';
+import { 
+  getFirestore, 
+  collection, 
+  doc, 
+  addDoc, 
+  updateDoc, 
+  deleteDoc, 
+  onSnapshot
+} from 'firebase/firestore';
+import { 
+  LayoutDashboard, 
+  CheckSquare, 
+  Zap, 
+  Timer, 
+  Wallet, 
+  MessageSquare, 
+  Moon, 
+  Sun, 
+  Plus, 
+  Trash2, 
+  Play, 
+  Pause, 
+  RotateCcw,
+  Send,
+  Sparkles,
+  TrendingUp,
+  Award,
+  LogOut,
+  User,
+  BrainCircuit,
+  Settings,
+  ShieldAlert,
+  Lightbulb,
+  Target,
+  Rocket,
+  Volume2,
+  ListTodo
+} from 'lucide-react';
 
-<style>
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #0f172a;
-  color: white;
-}
+// --- إعدادات Firebase ---
+const firebaseConfig = {
+  apiKey: "AIzaSyBsvF9J_DneR5H0JbOW4HX_JjVWaajAUgk",
+  authDomain: "website-8833c.firebaseapp.com",
+  projectId: "website-8833c",
+  storageBucket: "website-8833c.firebasestorage.app",
+  messagingSenderId: "831801957212",
+  appId: "1:831801957212:web:707b3c8ac71fb67212bf99",
+  measurementId: "G-DHELDT5FJX"
+};
 
-/* NAV */
-.navbar {
-  background: #020617;
-  padding: 15px;
-  text-align: center;
-  font-size: 20px;
-  border-bottom: 1px solid #1e293b;
-}
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'life-os-pro-v1';
+const apiKey = ""; // Gemini API Key
 
-/* CONTAINER */
-.container {
-  max-width: 520px;
-  margin: auto;
-  padding: 15px;
-}
+// --- المكونات المساعدة ---
 
-/* CARD LOGIN 3D */
-.card {
-  background: #020617;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-  transform: perspective(800px) rotateX(2deg);
-  transition: 0.3s;
-}
-
-.card:hover {
-  transform: perspective(800px) rotateX(0deg) scale(1.01);
-}
-
-input, button {
-  width: 100%;
-  margin: 6px 0;
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-}
-
-input {
-  background: #0f172a;
-  color: white;
-  border: 1px solid #1e293b;
-}
-
-button {
-  background: #3b82f6;
-  color: white;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-button:hover {
-  transform: scale(1.03);
-}
-
-/* SWITCH */
-.switch {
-  color: #60a5fa;
-  cursor: pointer;
-  margin-top: 10px;
-  text-align: center;
-}
-
-/* POSTS */
-.post {
-  background: #020617;
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 10px;
-  border: 1px solid #1e293b;
-}
-
-.email {
-  font-size: 12px;
-  color: #94a3b8;
-}
-
-/* LOGOUT */
-.logout {
-  background: #ef4444;
-  margin-top: 10px;
-}
-
-/* FOOTER */
-.footer {
-  margin-top: 25px;
-  text-align: center;
-  font-size: 13px;
-  opacity: 0.8;
-}
-
-/* WHATSAPP */
-.whatsapp {
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
-}
-
-.whatsapp a {
-  background: #25D366;
-  padding: 10px 15px;
-  border-radius: 50px;
-  color: white;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: 0.3s;
-}
-
-.whatsapp a:hover {
-  transform: scale(1.05);
-}
-</style>
-</head>
-
-<body>
-
-<div class="navbar">
-🔥  HOota O Black  🔥
-</div>
-
-<div class="container">
-
-<!-- 🔐 AUTH -->
-<div id="authBox" class="card">
-
-  <div id="loginBox">
-    <h3>تسجيل الدخول</h3>
-    <input type="email" id="logEmail" placeholder="Email">
-    <input type="password" id="logPass" placeholder="Password">
-    <button onclick="login()">Login</button>
-    <div class="switch" onclick="toggleForm()">إنشاء حساب جديد</div>
+const GlassCard = ({ children, className = "" }) => (
+  <div className={`bg-white/5 backdrop-blur-3xl border border-white/10 rounded-3xl p-6 transition-all duration-300 hover:border-white/20 shadow-xl ${className}`}>
+    {children}
   </div>
+);
 
-  <div id="registerBox" style="display:none">
-    <h3>إنشاء حساب</h3>
-    <input type="email" id="regEmail" placeholder="Email">
-    <input type="password" id="regPass" placeholder="Password">
-    <input type="password" id="regPass2" placeholder="Confirm Password">
-    <button onclick="register()">Register</button>
-    <div class="switch" onclick="toggleForm()">رجوع لتسجيل الدخول</div>
-  </div>
+const IconButton = ({ icon: Icon, onClick, color = "purple" }) => {
+  const colors = {
+    purple: "text-purple-400 bg-purple-500/10 hover:bg-purple-500/20",
+    blue: "text-blue-400 bg-blue-500/10 hover:bg-blue-500/20",
+  };
+  return (
+    <button onClick={onClick} className={`p-3 rounded-2xl transition-all ${colors[color]}`}>
+      <Icon size={20} />
+    </button>
+  );
+};
 
-</div>
-
-<!-- 🟢 POSTS -->
-<div id="appBox" style="display:none">
-
-  <h3>اكتب بوست</h3>
-  <input type="text" id="postInput" placeholder="اكتب هنا">
-  <button onclick="addPost()">نشر</button>
-
-  <button class="logout" onclick="logout()">تسجيل خروج</button>
-
-  <div id="postsList"></div>
-
-  <!-- WhatsApp -->
-  <div class="whatsapp">
-    <a href="https://wa.me/249900623733" target="_blank">
-      💬 تواصل واتساب
-    </a>
-  </div>
-
-  <!-- Footer -->
-  <div class="footer">
-    جميع الحقوق محفوظة لدى HOota O Black ©
-  </div>
-
-</div>
-
-</div>
-
-<!-- SUPABASE -->
-<script type="module">
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
-
-const supabaseUrl = "https://ymepvanoqgvntcuacnhm.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InltZXB2YW5vcWd2bnRjdWFjbmhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNzE2MDMsImV4cCI6MjA5MTg0NzYwM30.T8vXyv_DsSGoas8kLpNMI3ULEA8keB2pTseHnGUlZyw";
-
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-/* UI */
-const authBox = document.getElementById("authBox");
-const appBox = document.getElementById("appBox");
-
-/* TOGGLE FORM */
-window.toggleForm = function(){
-  document.getElementById("loginBox").style.display =
-  document.getElementById("loginBox").style.display === "none" ? "block" : "none";
-
-  document.getElementById("registerBox").style.display =
-  document.getElementById("registerBox").style.display === "none" ? "block" : "none";
-}
-
-/* CHECK USER */
-async function checkUser(){
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if(user){
-    authBox.style.display = "none";
-    appBox.style.display = "block";
-    loadPosts();
-  } else {
-    authBox.style.display = "block";
-    appBox.style.display = "none";
-  }
-}
-checkUser();
-
-/* REGISTER */
-window.register = async function(){
-  const email = regEmail.value;
-  const pass = regPass.value;
-  const pass2 = regPass2.value;
-
-  if(pass !== pass2){
-    alert("كلمات المرور غير متطابقة");
-    return;
-  }
-
-  const { error } = await supabase.auth.signUp({
-    email,
-    password: pass
-  });
-
-  if(error) alert(error.message);
-  else alert("تم إنشاء الحساب");
-}
-
-/* LOGIN */
-window.login = async function(){
-  const { error } = await supabase.auth.signInWithPassword({
-    email: logEmail.value,
-    password: logPass.value
-  });
-
-  if(error) alert(error.message);
-  else checkUser();
-}
-
-/* LOGOUT */
-window.logout = async function(){
-  await supabase.auth.signOut();
-  checkUser();
-}
-
-/* ADD POST */
-window.addPost = async function(){
-  const content = postInput.value;
-
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if(!user){
-    alert("سجل دخول أولاً");
-    return;
-  }
-
-  await supabase.from("posts").insert([
-    { email: user.email, content }
+export default function App() {
+  const [user, setUser] = useState(null);
+  const [authStatus, setAuthStatus] = useState('initializing');
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [darkMode, setDarkMode] = useState(true);
+  
+  // حالة البيانات
+  const [tasks, setTasks] = useState([]);
+  const [expenses, setExpenses] = useState([]);
+  const [chatMessages, setChatMessages] = useState([
+    { role: 'assistant', text: "أهلاً بك في LifeOS PRO. أنا رفيقك المدعوم بذكاء Gemini ✨. كيف نطور يومك؟" }
   ]);
+  
+  // حالات الإدخال والذكاء الاصطناعي
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const [aiInsight, setAiInsight] = useState("");
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [newTask, setNewTask] = useState("");
+  const [chatInput, setChatInput] = useState("");
+  const [expenseAmt, setExpenseAmt] = useState("");
+  const [expenseCat, setExpenseCat] = useState("أساسي");
 
-  postInput.value = "";
-  loadPosts();
-}
+  // المؤقت
+  const [timeLeft, setTimeLeft] = useState(1500);
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const timerRef = useRef(null);
 
-/* LOAD POSTS */
-async function loadPosts(){
-  const { data } = await supabase
-    .from("posts")
-    .select("*")
-    .order("created_at", { ascending: false });
+  // 1. منطق المصادقة مع معالجة الأخطاء المحسنة
+  useEffect(() => {
+    const initAuth = async () => {
+      try {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        } else if (!auth.currentUser) {
+          await signInAnonymously(auth);
+        }
+      } catch (err) {
+        console.error("Auth error:", err);
+        setAuthStatus('error');
+      }
+    };
 
-  postsList.innerHTML = "";
+    initAuth();
+    const unsubscribe = onAuthStateChanged(auth, (u) => {
+      setUser(u);
+      if (u) setAuthStatus('success');
+    });
+    return () => unsubscribe();
+  }, []);
 
-  data.forEach(p=>{
-    postsList.innerHTML += `
-      <div class="post">
-        <div class="email">${p.email}</div>
-        <div>${p.content}</div>
+  // 2. مزامنة البيانات من Firestore
+  useEffect(() => {
+    if (!user) return;
+
+    const unsubTasks = onSnapshot(
+      collection(db, 'artifacts', appId, 'users', user.uid, 'tasks'),
+      (snap) => setTasks(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+      (err) => console.error(err)
+    );
+
+    const unsubExpenses = onSnapshot(
+      collection(db, 'artifacts', appId, 'users', user.uid, 'expenses'),
+      (snap) => setExpenses(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+      (err) => console.error(err)
+    );
+
+    return () => { unsubTasks(); unsubExpenses(); };
+  }, [user]);
+
+  // 3. المؤقت
+  useEffect(() => {
+    if (isTimerRunning && timeLeft > 0) {
+      timerRef.current = setInterval(() => setTimeLeft(t => t - 1), 1000);
+    } else {
+      clearInterval(timerRef.current);
+    }
+    return () => clearInterval(timerRef.current);
+  }, [isTimerRunning, timeLeft]);
+
+  // --- ميزات Gemini المتقدمة ---
+
+  const callGemini = async (prompt, systemPrompt = "أنت مساعد ذكي ونشيط لنظام LifeOS. تحدث بالعربية بأسلوب محفز ومبدع.") => {
+    setIsAiLoading(true);
+    let retries = 0;
+    const maxRetries = 5;
+    
+    while (retries < maxRetries) {
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            systemInstruction: { parts: [{ text: systemPrompt }] }
+          })
+        });
+        const data = await response.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        setIsAiLoading(false);
+        return text;
+      } catch (e) {
+        retries++;
+        await new Promise(resolve => setTimeout(resolve, Math.pow(2, retries) * 1000));
+      }
+    }
+    setIsAiLoading(false);
+    return "عذراً، المحرك العصبي مشغول حالياً.";
+  };
+
+  // ميزة تحويل النص إلى صوت ✨
+  const speakResponse = async (text) => {
+    if (isSpeaking) return;
+    setIsSpeaking(true);
+    try {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts?key=${apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: `Say in a motivational and calm voice: ${text}` }] }],
+          generationConfig: {
+            responseModalities: ["AUDIO"],
+            speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } }
+          },
+          model: "gemini-2.5-flash-preview-tts"
+        })
+      });
+      const data = await response.json();
+      const pcmData = data.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+      if (!pcmData) throw new Error("No audio data");
+
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
+      const binaryString = atob(pcmData);
+      const bytes = new Int16Array(binaryString.length / 2);
+      for (let i = 0; i < binaryString.length; i += 2) {
+        bytes[i / 2] = (binaryString.charCodeAt(i + 1) << 8) | binaryString.charCodeAt(i);
+      }
+      const buffer = audioCtx.createBuffer(1, bytes.length, 24000);
+      buffer.getChannelData(0).set(Array.from(bytes).map(v => v / 32768));
+      const source = audioCtx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(audioCtx.destination);
+      source.start();
+      source.onended = () => setIsSpeaking(false);
+    } catch (e) {
+      console.error("TTS Error:", e);
+      setIsSpeaking(false);
+    }
+  };
+
+  const getSmartBreakdown = async (taskText) => {
+    const res = await callGemini(
+      `قم بتقسيم هذه المهمة: "${taskText}" إلى 3 خطوات عملية وصغيرة جداً للبدء فوراً.`,
+      "أنت خبير في التغلب على التسويف. أعطِ خطوات بسيطة جداً."
+    );
+    setAiInsight(res);
+  };
+
+  const planMyDayAI = async () => {
+    const taskList = tasks.map(t => t.text).join(', ');
+    const res = await callGemini(
+      `قائمة مهامي: [${taskList}]. اقترح ترتيباً ذكياً لهذه المهام بناءً على مستويات الطاقة البشرية (الأصعب أولاً)، وأضف نصيحة غذائية لليوم.`,
+      "أنت مدرب إنتاجية وصحة متكامل."
+    );
+    setChatMessages(prev => [...prev, { role: 'assistant', text: res }]);
+    setActiveTab('ai');
+  };
+
+  const getMotivationAI = async () => {
+    const res = await callGemini("أحتاج جملة تحفيزية واحدة قوية جداً من فيلسوف أو قائد عالمي لتشجيعي على التركيز الآن.");
+    setAiInsight(res);
+    speakResponse(res);
+  };
+
+  const handleAiChat = async () => {
+    if (!chatInput.trim()) return;
+    const input = chatInput;
+    setChatInput("");
+    setChatMessages(prev => [...prev, { role: 'user', text: input }]);
+    const res = await callGemini(input);
+    setChatMessages(prev => [...prev, { role: 'assistant', text: res }]);
+  };
+
+  // --- العمليات الأساسية ---
+  const addTask = async () => {
+    if (!user || !newTask) return;
+    await addDoc(collection(db, 'artifacts', appId, 'users', user.uid, 'tasks'), {
+      text: newTask,
+      completed: false,
+      createdAt: Date.now()
+    });
+    setNewTask("");
+  };
+
+  const addExpense = async () => {
+    if (!user || !expenseAmt) return;
+    await addDoc(collection(db, 'artifacts', appId, 'users', user.uid, 'expenses'), {
+      amount: parseFloat(expenseAmt),
+      category: expenseCat,
+      date: Date.now()
+    });
+    setExpenseAmt("");
+  };
+
+  // --- واجهة المستخدم ---
+
+  const renderDashboard = () => (
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 text-right" dir="rtl">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+        <div>
+          <h2 className="text-4xl font-bold bg-gradient-to-l from-purple-400 to-blue-400 bg-clip-text text-transparent italic">
+            لوحة التحكم ✨
+          </h2>
+          <p className="text-slate-400 mt-2 italic">الذكاء الاصطناعي جاهز لتحليل أدائك.</p>
+        </div>
+        <div className="flex gap-2">
+          <button 
+            onClick={planMyDayAI}
+            className="px-6 py-3 bg-purple-600 rounded-2xl hover:bg-purple-500 transition-all flex items-center gap-2 shadow-lg shadow-purple-900/20"
+          >
+            <Rocket size={18} />
+            <span>خطة ذكية ✨</span>
+          </button>
+        </div>
       </div>
-    `;
-  });
-}
-</script>
 
-</body>
-</html>
+      {aiInsight && (
+        <GlassCard className="border-purple-500/30 bg-purple-500/5 animate-in zoom-in-95 relative">
+          <button onClick={() => speakResponse(aiInsight)} className={`absolute top-4 left-4 p-2 rounded-full transition-all ${isSpeaking ? 'bg-purple-500 animate-pulse' : 'bg-white/5 hover:bg-white/10'}`}>
+            <Volume2 size={16} />
+          </button>
+          <div className="flex gap-4 items-start pl-10">
+            <Sparkles size={28} className="text-purple-400 shrink-0" />
+            <p className="text-lg leading-relaxed text-purple-100 italic">"{aiInsight}"</p>
+          </div>
+        </GlassCard>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <GlassCard>
+          <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-purple-400"><ListTodo size={18} /> المهام</h3>
+          <div className="space-y-3">
+            {tasks.slice(0, 3).map(t => (
+              <div key={t.id} className="group flex items-center justify-between text-sm">
+                <span className={t.completed ? 'line-through text-slate-500' : ''}>{t.text}</span>
+                <button onClick={() => getSmartBreakdown(t.text)} className="opacity-0 group-hover:opacity-100 text-xs text-purple-400 italic">تفكيك ✨</button>
+              </div>
+            ))}
+            {tasks.length === 0 && <p className="text-slate-500 text-xs">لا مهام اليوم.</p>}
+          </div>
+        </GlassCard>
+
+        <GlassCard>
+          <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-emerald-400"><Wallet size={18} /> المالية</h3>
+          <div className="text-center py-4">
+            <p className="text-4xl font-bold text-emerald-400">${expenses.reduce((a,b) => a + (b.amount || 0), 0).toFixed(0)}</p>
+            <button onClick={() => setActiveTab('money')} className="text-[10px] text-slate-400 hover:text-emerald-400 mt-2 uppercase tracking-widest">إدارة الميزانية الذكية ✨</button>
+          </div>
+        </GlassCard>
+
+        <GlassCard className="bg-gradient-to-br from-blue-500/10 to-purple-500/10">
+          <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-blue-400"><Target size={18} /> الإنجاز</h3>
+          <div className="flex flex-col items-center justify-center py-2">
+            <Award size={48} className="text-yellow-500 mb-2" />
+            <p className="text-sm font-bold">بطل اليوم</p>
+            <p className="text-[10px] text-slate-500 mt-1">أكملت {tasks.filter(t => t.completed).length} مهام</p>
+          </div>
+        </GlassCard>
+      </div>
+    </div>
+  );
+
+  if (authStatus === 'initializing') return (
+    <div className="h-screen bg-[#050508] flex items-center justify-center">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
+        <p className="text-purple-400 animate-pulse font-bold">جاري تحميل الذكاء الاصطناعي...</p>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className={`min-h-screen ${darkMode ? 'bg-[#050508] text-white' : 'bg-slate-50 text-slate-900'} font-sans transition-colors duration-500 pb-24`}>
+      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-30">
+        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-purple-600/20 blur-[180px] rounded-full" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-600/20 blur-[180px] rounded-full" />
+      </div>
+
+      <main className="relative max-w-6xl mx-auto px-6 pt-10">
+        <header className="flex justify-between items-center mb-16 flex-row-reverse">
+          <div className="flex items-center gap-4 flex-row-reverse">
+            <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/30">
+              <BrainCircuit size={28} className="text-white" />
+            </div>
+            <div className="text-right">
+              <h1 className="text-2xl font-black italic tracking-tight">LIFE OS <span className="text-purple-500 text-sm">PRO</span></h1>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em]">Quantum Intelligence ✨</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <button onClick={() => setDarkMode(!darkMode)} className="p-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10">
+              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+            {user && (
+              <button onClick={() => signOut(auth)} className="p-3 text-slate-500 hover:text-rose-500 transition-all">
+                <LogOut size={20} />
+              </button>
+            )}
+          </div>
+        </header>
+
+        {activeTab === 'dashboard' && renderDashboard()}
+        
+        {activeTab === 'tasks' && (
+          <div className="max-w-2xl mx-auto space-y-6 animate-in slide-in-from-bottom-4 text-right" dir="rtl">
+            <h2 className="text-3xl font-bold mb-8">إدارة المهام ✨</h2>
+            <div className="flex gap-2 mb-10">
+              <input 
+                value={newTask} onChange={e => setNewTask(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && addTask()}
+                placeholder="ما هي المهمة القادمة؟"
+                className="flex-1 bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-purple-500 outline-none"
+              />
+              <button onClick={addTask} className="bg-purple-600 hover:bg-purple-500 px-8 rounded-2xl shadow-xl shadow-purple-900/30"><Plus size={24} /></button>
+            </div>
+            <div className="space-y-4">
+              {tasks.map(t => (
+                <GlassCard key={t.id} className="py-4 px-6 flex items-center justify-between group hover:translate-x-[-4px]">
+                  <div className="flex items-center gap-4">
+                    <button 
+                      onClick={() => updateDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'tasks', t.id), { completed: !t.completed })}
+                      className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${t.completed ? 'bg-purple-600 border-purple-600' : 'border-white/20'}`}
+                    >
+                      {t.completed && <CheckSquare size={14} />}
+                    </button>
+                    <span className={t.completed ? 'line-through text-slate-500' : ''}>{t.text}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button onClick={() => getSmartBreakdown(t.text)} className="p-2 text-purple-400 hover:bg-purple-500/10 rounded-xl transition-all"><Sparkles size={16} /></button>
+                    <button onClick={() => deleteDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'tasks', t.id))} className="p-2 text-rose-500 hover:bg-rose-500/10 rounded-xl"><Trash2 size={16} /></button>
+                  </div>
+                </GlassCard>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'ai' && (
+          <div className="max-w-3xl mx-auto h-[70vh] flex flex-col text-right" dir="rtl">
+            <div className="flex items-center justify-between mb-6">
+               <h2 className="text-2xl font-bold flex items-center gap-3">
+                <Sparkles className="text-purple-400" />
+                Gemini Intelligence ✨
+              </h2>
+              <div className="flex items-center gap-2 px-3 py-1 bg-emerald-500/10 text-emerald-400 rounded-full text-xs">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                متصل
+              </div>
+            </div>
+            <GlassCard className="flex-1 overflow-hidden flex flex-col p-0 border-purple-500/20 shadow-2xl shadow-purple-900/10">
+              <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                {chatMessages.map((m, i) => (
+                  <div key={i} className={`flex ${m.role === 'user' ? 'justify-start' : 'justify-end'}`}>
+                    <div className={`max-w-[85%] p-5 rounded-[2rem] leading-relaxed ${m.role === 'user' ? 'bg-purple-600 text-white shadow-lg' : 'bg-white/10 border border-white/5'}`}>
+                      {m.text}
+                      {m.role === 'assistant' && (
+                        <button onClick={() => speakResponse(m.text)} className="mt-3 block text-purple-400 hover:text-purple-300">
+                          <Volume2 size={16} />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                {isAiLoading && <div className="text-xs text-purple-400 animate-pulse font-bold tracking-widest italic">Gemini is processing...</div>}
+              </div>
+              <div className="p-6 bg-black/20 border-t border-white/10 flex gap-3">
+                <input 
+                  value={chatInput} onChange={e => setChatInput(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleAiChat()}
+                  placeholder="كيف يمكنني تحسين إنتاجيتك اليوم؟"
+                  className="flex-1 bg-white/5 border border-white/10 rounded-2xl px-6 py-4 outline-none focus:border-purple-500"
+                />
+                <button onClick={handleAiChat} className="p-4 bg-purple-600 rounded-2xl hover:bg-purple-500 transition-all shadow-lg"><Send size={24} /></button>
+              </div>
+            </GlassCard>
+          </div>
+        )}
+
+        {activeTab === 'study' && (
+          <div className="flex flex-col items-center justify-center h-[60vh] space-y-12">
+            <div className="relative">
+              <div className="w-72 h-72 rounded-full border-8 border-white/5 flex items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-purple-600/10 to-transparent" style={{ height: `${(timeLeft/1500)*100}%` }} />
+                <span className="text-7xl font-mono font-black text-white relative z-10 tracking-tighter">
+                  {Math.floor(timeLeft/60).toString().padStart(2,'0')}:{(timeLeft%60).toString().padStart(2,'0')}
+                </span>
+              </div>
+            </div>
+            <div className="flex gap-6 items-center">
+              <IconButton icon={RotateCcw} onClick={() => { setTimeLeft(1500); setIsTimerRunning(false); }} color="blue" />
+              <button 
+                onClick={() => setIsTimerRunning(!isTimerRunning)}
+                className="w-24 h-24 bg-purple-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-purple-900/40 hover:scale-105 transition-all"
+              >
+                {isTimerRunning ? <Pause size={40} /> : <Play size={40} className="ml-1" />}
+              </button>
+              <button onClick={getMotivationAI} className="p-4 bg-white/5 rounded-2xl hover:bg-white/10 text-yellow-400">
+                <Sparkles size={24} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'money' && (
+          <div className="max-w-2xl mx-auto space-y-8 text-right" dir="rtl">
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-3xl font-bold">الميزانية الذكية ✨</h2>
+              <button 
+                onClick={async () => {
+                  const data = expenses.map(e => `${e.amount} في ${e.category}`).join(', ');
+                  const res = await callGemini(`مصروفاتي: [${data}]. حلل نمط إنفاقي وأخبرني أين أفرطت في الصرف.`);
+                  setAiInsight(res);
+                }}
+                className="px-6 py-2 bg-emerald-600/20 text-emerald-400 rounded-xl border border-emerald-500/20"
+              >
+                تحليل مالي ✨
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <GlassCard className="text-center bg-emerald-500/5">
+                <p className="text-xs text-slate-500 uppercase">المنفق الإجمالي</p>
+                <p className="text-4xl font-bold text-emerald-400 mt-2">${expenses.reduce((a,b) => a + (b.amount || 0), 0).toFixed(0)}</p>
+              </GlassCard>
+              <GlassCard className="text-center bg-blue-500/5">
+                <p className="text-xs text-slate-500 uppercase">العمليات</p>
+                <p className="text-4xl font-bold text-blue-400 mt-2">{expenses.length}</p>
+              </GlassCard>
+            </div>
+            <GlassCard>
+              <h3 className="font-bold mb-4">إضافة مصروف جديد</h3>
+              <div className="flex gap-3">
+                <input 
+                  type="number" value={expenseAmt} onChange={e => setExpenseAmt(e.target.value)}
+                  placeholder="المبلغ" className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3"
+                />
+                <select value={expenseCat} onChange={e => setExpenseCat(e.target.value)} className="bg-slate-800 rounded-xl px-4 py-3 outline-none">
+                  <option value="أساسي">أساسي</option>
+                  <option value="ترفيه">ترفيه</option>
+                  <option value="طعام">طعام</option>
+                  <option value="صحة">صحة</option>
+                </select>
+                <button onClick={addExpense} className="bg-emerald-600 hover:bg-emerald-500 px-8 rounded-xl">حفظ</button>
+              </div>
+            </GlassCard>
+          </div>
+        )}
+      </main>
+
+      {/* شريط التنقل السفلي */}
+      <nav className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-3xl border border-white/10 px-10 py-5 rounded-[40px] flex items-center gap-12 md:gap-20 shadow-2xl z-50">
+        {[
+          { id: 'dashboard', icon: LayoutDashboard, label: 'الرئيسية' },
+          { id: 'tasks', icon: CheckSquare, label: 'المهام' },
+          { id: 'study', icon: Timer, label: 'تركيز' },
+          { id: 'ai', icon: MessageSquare, label: 'ذكاء ✨' },
+          { id: 'money', icon: Wallet, label: 'مالية' }
+        ].map(item => (
+          <button 
+            key={item.id}
+            onClick={() => setActiveTab(item.id)} 
+            className={`flex flex-col items-center gap-2 transition-all group ${activeTab === item.id ? 'text-purple-400 scale-110' : 'text-slate-500'}`}
+          >
+            <item.icon size={26} className={activeTab === item.id ? 'drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]' : ''} />
+            <span className="text-[9px] font-bold uppercase tracking-widest">{item.label}</span>
+          </button>
+        ))}
+      </nav>
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Noto+Sans+Arabic:wght@300;400;700;900&display=swap');
+        body { font-family: 'Noto Sans Arabic', 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+      `}} />
+    </div>
+  );
+}
