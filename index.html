@@ -328,7 +328,7 @@ window.deletePost = async function(postId){
   const { error } = await supabase
     .from('posts')
     .delete()
-    .eq('id', Number(postId))
+    .eq('id', postId) // شلت Number() لأن الـ id نوعه uuid
   
   if (error) {
     alert('فشل الحذف: ' + error.message + '\nالكود: ' + error.code)
@@ -347,7 +347,7 @@ window.editPost = async function(postId, oldContent){
   const { error } = await supabase
     .from('posts')
     .update({ content: newContent })
-    .eq('id', Number(postId))
+    .eq('id', postId) // شلت Number() لأن الـ id نوعه uuid
   
   if (error) {
     alert('فشل التعديل: ' + error.message + '\nالكود: ' + error.code)
@@ -382,8 +382,8 @@ async function loadPosts(){
         <div class="content">${p.content}</div>
         ${isOwner ? `
           <div class="actions">
-            <button class="btn-edit" onclick='editPost(${p.id}, ${JSON.stringify(p.content)})'>تعديل</button>
-            <button class="btn-delete" onclick="deletePost(${p.id})">حذف</button>
+            <button class="btn-edit" onclick='editPost("${p.id}", ${JSON.stringify(p.content)})'>تعديل</button>
+            <button class="btn-delete" onclick="deletePost('${p.id}')">حذف</button>
           </div>
         ` : ''}
       </div>
