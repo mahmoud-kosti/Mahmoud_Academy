@@ -2,8 +2,8 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<title>My Social App</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Social App</title>
 
 <style>
 body {
@@ -328,7 +328,7 @@ window.deletePost = async function(postId){
   const { error } = await supabase
     .from('posts')
     .delete()
-    .eq('id', Number(postId)) // مهم: حولناه لرقم
+    .eq('id', Number(postId))
   
   if (error) {
     alert('فشل الحذف: ' + error.message + '\nالكود: ' + error.code)
@@ -341,12 +341,13 @@ window.deletePost = async function(postId){
 /* EDIT POST */
 window.editPost = async function(postId, oldContent){
   const newContent = prompt('اكتب المحتوى الجديد:', oldContent)
-  if (!newContent || newContent === oldContent) return
+  if (newContent === null) return
+  if (newContent === oldContent) return
 
   const { error } = await supabase
     .from('posts')
     .update({ content: newContent })
-    .eq('id', Number(postId)) // مهم: حولناه لرقم
+    .eq('id', Number(postId))
   
   if (error) {
     alert('فشل التعديل: ' + error.message + '\nالكود: ' + error.code)
@@ -366,7 +367,6 @@ async function loadPosts(){
     .order("created_at", { ascending: false });
 
   if(error) {
-    console.log(error);
     alert('خطأ في تحميل البوستات: ' + error.message)
     return;
   }
