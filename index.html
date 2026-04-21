@@ -13,7 +13,6 @@ body {
   color: white;
 }
 
-/* NAV */
 .navbar {
   background: #020617;
   padding: 15px;
@@ -22,14 +21,12 @@ body {
   border-bottom: 1px solid #1e293b;
 }
 
-/* CONTAINER */
 .container {
   max-width: 520px;
   margin: auto;
   padding: 15px;
 }
 
-/* CARD LOGIN 3D */
 .card {
   background: #020617;
   padding: 20px;
@@ -55,6 +52,9 @@ input {
   background: #0f172a;
   color: white;
   border: 1px solid #1e293b;
+  text-align: center;
+  font-size: 18px;
+  letter-spacing: 5px;
 }
 
 button {
@@ -68,7 +68,6 @@ button:hover {
   transform: scale(1.03);
 }
 
-/* SWITCH */
 .switch {
   color: #60a5fa;
   cursor: pointer;
@@ -76,7 +75,6 @@ button:hover {
   text-align: center;
 }
 
-/* POSTS */
 .post {
   background: #020617;
   padding: 10px;
@@ -96,7 +94,6 @@ button:hover {
   word-wrap: break-word;
 }
 
-/* ACTION BUTTONS */
 .actions {
   display: flex;
   gap: 8px;
@@ -118,13 +115,11 @@ button:hover {
   background: #ef4444;
 }
 
-/* LOGOUT */
 .logout {
   background: #ef4444;
   margin-top: 10px;
 }
 
-/* FOOTER */
 .footer {
   margin-top: 25px;
   text-align: center;
@@ -132,7 +127,6 @@ button:hover {
   opacity: 0.8;
 }
 
-/* WHATSAPP */
 .whatsapp {
   display: flex;
   justify-content: center;
@@ -154,6 +148,21 @@ button:hover {
 .whatsapp a:hover {
   transform: scale(1.05);
 }
+
+.notice {
+  background: #1e3a8a;
+  padding: 15px;
+  border-radius: 10px;
+  margin: 10px 0;
+  text-align: center;
+  font-size: 14px;
+}
+
+.otp-input {
+  letter-spacing: 15px;
+  font-size: 24px;
+  font-weight: bold;
+}
 </style>
 </head>
 
@@ -173,7 +182,7 @@ button:hover {
     <input type="email" id="logEmail" placeholder="Email">
     <input type="password" id="logPass" placeholder="Password">
     <button onclick="login()">Login</button>
-    <div class="switch" onclick="toggleForm()">إنشاء حساب جديد</div>
+    <div class="switch" onclick="showRegister()">إنشاء حساب جديد</div>
   </div>
 
   <div id="registerBox" style="display:none">
@@ -182,7 +191,18 @@ button:hover {
     <input type="password" id="regPass" placeholder="Password">
     <input type="password" id="regPass2" placeholder="Confirm Password">
     <button onclick="register()">Register</button>
-    <div class="switch" onclick="toggleForm()">رجوع لتسجيل الدخول</div>
+    <div class="switch" onclick="showLogin()">رجوع لتسجيل الدخول</div>
+  </div>
+
+  <div id="otpBox" style="display:none">
+    <h3>أدخل كود التحقق</h3>
+    <div class="notice">
+      رسلنا كود من 6 أرقام على <br><span id="otpEmail"></span>
+    </div>
+    <input type="text" id="otpCode" class="otp-input" placeholder="000000" maxlength="6">
+    <button onclick="verifyOtp()">تأكيد الكود</button>
+    <button onclick="resendOtp()" style="background:#6b7280;">إعادة إرسال الكود</button>
+    <div class="switch" onclick="showLogin()">رجوع لتسجيل الدخول</div>
   </div>
 
 </div>
@@ -198,14 +218,12 @@ button:hover {
 
   <div id="postsList"></div>
 
-  <!-- WhatsApp -->
   <div class="whatsapp">
     <a href="https://wa.me/249900623733" target="_blank">
       💬 تواصل واتساب
     </a>
   </div>
 
-  <!-- Footer -->
   <div class="footer">
     جميع الحقوق محفوظة لدى HOota O Black ©
   </div>
@@ -228,58 +246,125 @@ const authBox = document.getElementById("authBox");
 const appBox = document.getElementById("appBox");
 
 /* TOGGLE FORM */
-window.toggleForm = function(){
-  document.getElementById("loginBox").style.display =
-  document.getElementById("loginBox").style.display === "none" ? "block" : "none";
+window.showLogin = function(){
+  loginBox.style.display = "block";
+  registerBox.style.display = "none";
+  otpBox.style.display = "none";
+}
 
-  document.getElementById("registerBox").style.display =
-  document.getElementById("registerBox").style.display === "none" ? "block" : "none";
+window.showRegister = function(){
+  loginBox.style.display = "none";
+  registerBox.style.display = "block";
+  otpBox.style.display = "none";
+}
+
+window.showOtp = function(email){
+  loginBox.style.display = "none";
+  registerBox.style.display = "none";
+  otpBox.style.display = "block";
+  document.getElementById("otpEmail").textContent = email;
 }
 
 /* CHECK USER */
 async function checkUser(){
   const { data: { user } } = await supabase.auth.getUser();
 
-  if(user){
+  if(user && user.email_confirmed_at){
     authBox.style.display = "none";
     appBox.style.display = "block";
     loadPosts();
   } else {
     authBox.style.display = "block";
     appBox.style.display = "none";
+    showLogin()
   }
 }
 checkUser();
 
 /* REGISTER */
 window.register = async function(){
-  const email = regEmail.value;
+  const email = regEmail.value.trim();
   const pass = regPass.value;
   const pass2 = regPass2.value;
+
+  if(!email || !pass){
+    alert("املأ كل الحقول");
+    return;
+  }
 
   if(pass !== pass2){
     alert("كلمات المرور غير متطابقة");
     return;
   }
 
-  const { error } = await supabase.auth.signUp({
+  if(pass.length < 6){
+    alert("كلمة المرور لازم 6 أحرف على الأقل");
+    return;
+  }
+
+  const { data, error } = await supabase.auth.signUp({
     email,
     password: pass
   });
 
+  if(error) {
+    alert(error.message);
+  } else {
+    showOtp(email);
+  }
+}
+
+/* VERIFY OTP */
+window.verifyOtp = async function(){
+  const email = document.getElementById("otpEmail").textContent;
+  const token = otpCode.value.trim();
+
+  if(token.length !== 6){
+    alert("الكود لازم 6 أرقام");
+    return;
+  }
+
+  const { data, error } = await supabase.auth.verifyOtp({
+    email,
+    token,
+    type: 'signup'
+  });
+
+  if(error) {
+    alert('كود غلط أو منتهي: ' + error.message);
+  } else {
+    alert('تم تأكيد حسابك بنجاح');
+    checkUser();
+  }
+}
+
+/* RESEND OTP */
+window.resendOtp = async function(){
+  const email = document.getElementById("otpEmail").textContent;
+  
+  const { error } = await supabase.auth.resend({
+    type: 'signup',
+    email: email
+  });
+  
   if(error) alert(error.message);
-  else alert("تم إنشاء الحساب");
+  else alert('رسلنا الكود تاني، شيك إيميلك');
 }
 
 /* LOGIN */
 window.login = async function(){
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email: logEmail.value,
     password: logPass.value
   });
 
-  if(error) alert(error.message);
-  else checkUser();
+  if(error) {
+    alert(error.message);
+  } else if(data.user && !data.user.email_confirmed_at){
+    showOtp(data.user.email);
+  } else {
+    checkUser();
+  }
 }
 
 /* LOGOUT */
@@ -328,12 +413,11 @@ window.deletePost = async function(postId){
   const { error } = await supabase
     .from('posts')
     .delete()
-    .eq('id', postId) // شلت Number() لأن الـ id نوعه uuid
+    .eq('id', postId)
   
   if (error) {
-    alert('فشل الحذف: ' + error.message + '\nالكود: ' + error.code)
+    alert('فشل الحذف: ' + error.message)
   } else {
-    alert('اتحذف بنجاح')
     document.getElementById(`post-${postId}`).remove()
   }
 }
@@ -347,12 +431,11 @@ window.editPost = async function(postId, oldContent){
   const { error } = await supabase
     .from('posts')
     .update({ content: newContent })
-    .eq('id', postId) // شلت Number() لأن الـ id نوعه uuid
+    .eq('id', postId)
   
   if (error) {
-    alert('فشل التعديل: ' + error.message + '\nالكود: ' + error.code)
+    alert('فشل التعديل: ' + error.message)
   } else {
-    alert('اتعدل بنجاح')
     loadPosts()
   }
 }
