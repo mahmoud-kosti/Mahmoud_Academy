@@ -2,93 +2,72 @@
 
 # 🔥 HOota Social
 
-**منصة تواصل اجتماعي سودانية بتصميم Glassmorphism عصري 2026**
+### منصة تواصل اجتماعي سودانية عصرية بتصميم Glassmorphism 2026
 
 [Live Demo](https://mahmoud-kosti.github.io/hoota_social/)
 [Report Bug](https://github.com/mahmoud-kosti/hoota_social/issues)
+[Request Feature](https://github.com/mahmoud-kosti/hoota_social/issues)
 
-[[HTML](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)]()
-[[CSS](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)]()
+[[HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)]()
+[[CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)]()
 [[JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)]()
 [[Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)]()
+[[AI Powered](https://img.shields.io/badge/AI_Assisted-8B5CF6?style=for-the-badge&logo=openai&logoColor=white)]()
 
 </div>
 
 ---
 
-## 📸 لقطات من التطبيق
+## 📖 نبذة عن المشروع
 
-<div align="center">
+**HOota Social** هو تطبيق ويب تفاعلي للتواصل الاجتماعي، تم تطويره بالكامل باستخدام تقنيات الواجهة الأمامية الحديثة وبالاستعانة بأدوات الذكاء الاصطناعي لتسريع عملية التطوير وتحسين جودة الكود.
 
-<table>
-  <tr>
-    <td align="center" width="50%">
-      <img src="screenshots/IMG_5275.png" alt="تسجيل الدخول" width="100%">
-      <br />
-      <sub><b>1. تسجيل الدخول</b></sub>
-    </td>
-    <td align="center" width="50%">
-      <img src="screenshots/IMG_5276.png" alt="إنشاء حساب" width="100%">
-      <br />
-      <sub><b>2. إنشاء حساب جديد</b></sub>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" width="50%">
-      <img src="screenshots/IMG_5277.png" alt="نسيت كلمة المرور" width="100%">
-      <br />
-      <sub><b>3. استعادة كلمة المرور</b></sub>
-    </td>
-    <td align="center" width="50%">
-      <img src="screenshots/IMG_5278.png" alt="الصفحة الرئيسية" width="100%">
-      <br />
-      <sub><b>4. الصفحة الرئيسية - البوستات</b></sub>
-    </td>
-  </tr>
-</table>
+المشروع يمثل تطبيقاً عملياً لمفاهيم تطوير الويب الحديثة، واجهات المستخدم المتجاوبة، والتعامل مع قواعد البيانات السحابية. الهدف الأساسي هو توفير تجربة تواصل اجتماعي سريعة، آمنة، وعصرية مصممة خصيصاً لتناسب المستخدم السوداني والعربي.
 
-</div>
+### 🎯 الرؤية
+بناء منصة تواصل اجتماعي خفيفة وسريعة تعمل بدون سيرفرات تقليدية، مع واجهة مستخدم جذابة تواكب ترندات التصميم لعام 2026.
 
 ---
 
-## 📋 عن المشروع
+## ✨ المميزات والوظائف
 
-**HOota Social** هو تطبيق ويب تفاعلي مبني بالكامل على الواجهة الأمامية باستخدام **Vanilla JavaScript** و **Supabase** كـ Backend-as-a-Service.
-
-الهدف منه توفير تجربة تواصل اجتماعي سريعة وآمنة وعصرية للمستخدم السوداني، بواجهة Glassmorphism متوافقة 100% مع الجوال.
-
-### لماذا HOota Social؟
-- **🚀 بدون سيرفر**: كل الكود Frontend فقط، سهل الاستضافة على GitHub Pages
-- **🔒 أمان عالي**: مصادقة + RLS من Supabase تحمي بيانات كل مستخدم
-- **⚡ أداء سريع**: تحديثات لحظية بدون إعادة تحميل الصفحة
-- **🎨 تصميم 2026**: واجهة حديثة بتأثيرات Blur و Gradients
-
----
-
-## ✨ المميزات الرئيسية
-
-| الميزة | الوصف |
+| الميزة | التفاصيل التقنية |
 | :--- | :--- |
-| **🔐 مصادقة كاملة** | تسجيل، دخول، تأكيد بالإيميل، استعادة كلمة المرور، جلسات آمنة |
-| **📝 CRUD للبوستات** | إنشاء، قراءة، تعديل، وحذف البوستات مع صلاحيات لكل مستخدم |
-| **📱 متجاوب 100%** | تصميم Mobile-First شغال على كل أحجام الشاشات |
-| **🎨 تجربة مستخدم** | تأثيرات حركية، إشعارات Toast، Dark Mode، تحميل سريع |
-| **🛡️ أمان قاعدة البيانات** | Row Level Security تضمن إن كل مستخدم يعدل بوستاته بس |
+| **🔐 نظام مصادقة متكامل** | تسجيل حساب جديد، تسجيل دخول، تأكيد البريد الإلكتروني، استعادة كلمة المرور، إدارة الجلسات باستخدام Supabase Auth |
+| **📝 إدارة المحتوى CRUD** | إنشاء، قراءة، تعديل، وحذف المنشورات مع ربط كل منشور بالمستخدم الذي أنشأه |
+| **🛡️ أمان على مستوى الصف** | استخدام Row Level Security في PostgreSQL لضمان أن كل مستخدم يمكنه التعديل على بياناته فقط |
+| **⚡ تحديثات لحظية** | جلب وعرض المنشورات الجديدة بدون الحاجة لإعادة تحميل الصفحة |
+| **📱 تصميم متجاوب بالكامل** | واجهة Mobile-First تعمل بكفاءة على جميع أحجام الشاشات من الجوال إلى الديسكتوب |
+| **🎨 تجربة مستخدم حديثة** | تأثيرات Glassmorphism، حركات انتقالية سلسة، نظام إشعارات Toast، والوضع الداكن |
 
 ---
 
-## 🛠️ التقنيات المستخدمة
+## 🛠️ التقنيات والأدوات المستخدمة
 
-- **الواجهة الأمامية**: `HTML5` `CSS3` `JavaScript ES6+`
-- **الخلفية والخدمات**: [Supabase](https://supabase.com) - للمصادقة وقاعدة بيانات PostgreSQL
-- **الخطوط**: [Cairo Font](https://fonts.google.com/specimen/Cairo) من Google Fonts
-- **الاستضافة**: [GitHub Pages](https://pages.github.com)
+تم بناء هذا المشروع باستخدام مجموعة من التقنيات الحديثة مع الاستفادة من الذكاء الاصطناعي كمساعد في البرمجة:
+
+- **الواجهة الأمامية**: `HTML5` `CSS3` `Vanilla JavaScript ES6+`
+    - لا يوجد استخدام لأي أطر عمل مثل React أو Vue لضمان السرعة وخفة الحجم
+- **الخلفية كخدمة (BaaS)**: [Supabase](https://supabase.com)
+    - **المصادقة**: Supabase Auth لإدارة المستخدمين والجلسات
+    - **قاعدة البيانات**: PostgreSQL مع واجهة API تلقائية
+    - **الأمان**: RLS Policies للتحكم في صلاحيات الوصول للبيانات
+- **التصميم**: Glassmorphism، Gradients، Cairo Font من Google Fonts
+- **الاستضافة**: [GitHub Pages](https://pages.github.com) للنشر المجاني والسريع
+- **المساعد في التطوير**: تم الاستعانة بأدوات الذكاء الاصطناعي لكتابة الكود، حل المشاكل، وتحسين الأداء
 
 ---
 
-## 🚀 التشغيل محلياً
+## 🚀 كيفية التشغيل والاستخدام
 
-1. **استنسخ المشروع**
+لتشغيل نسخة من المشروع على جهازك المحلي، اتبع الخطوات التالية:
+
+### 1. المتطلبات الأساسية
+- حساب مجاني على [Supabase](https://app.supabase.com)
+- متصفح ويب حديث
+- محرر نصوص مثل VS Code
+
+### 2. خطوات التثبيت
+1. **استنساخ المستودع**
    ```sh
    git clone https://github.com/mahmoud-kosti/hoota_social.git
-   cd hoota_social
