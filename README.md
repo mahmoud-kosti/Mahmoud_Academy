@@ -4,7 +4,7 @@
 
 <br/>
 
-<img src="https://readme-typing-svg.herokuapp.com?font=Cairo&size=28&duration=2200&color=00F5FF&center=true&vCenter=true&width=900&lines=🚀+Building+The+Future+of+Social+Media;🔥+Sudan+to+the+World;💡+Powered+by+Pure+JavaScript;✨+No+Frameworks+Just+Performance;🧠+AI+Inspired+Experience" />
+<img src="https://readme-typing-svg.herokuapp.com?font=Cairo&size=28&duration=2200&color=00F5FF&center=true&vCenter=true&width=900&lines=🚀+Building+The+Future+of+Social+Media;🔥+Sudan+to+the+World;💡+Pure+JavaScript+Power;✨+Startup+Level+Project;🧠+AI+Inspired+Experience" />
 
 <br/><br/>
 
@@ -14,9 +14,6 @@
 <a href="https://github.com/mahmoud-kosti/hoota_social">
   <img src="https://img.shields.io/badge/⭐_Star_Project-FFD700?style=for-the-badge&logo=github&logoColor=black"/>
 </a>
-<a href="https://github.com/mahmoud-kosti/hoota_social/issues">
-  <img src="https://img.shields.io/badge/🐛_Issues-8B5CF6?style=for-the-badge&logo=github&logoColor=white"/>
-</a>
 
 <br/><br/>
 
@@ -25,9 +22,8 @@
 <br/><br/>
 
 ![Visitors](https://komarev.com/ghpvc/?username=mahmoud-kosti&style=for-the-badge&color=00f5ff)
-![Status](https://img.shields.io/badge/Status-Building%20a%20Startup-blueviolet?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Startup%20Mode-blueviolet?style=for-the-badge)
 ![Made in Sudan](https://img.shields.io/badge/Made%20with%20🔥-Sudan-008000?style=for-the-badge)
-![Open Source](https://img.shields.io/badge/Open%20Source-Yes-00C853?style=for-the-badge)
 
 </div>
 
@@ -35,54 +31,82 @@
 
 # 🚀 HOota Social
 
-> ⚡ منصة تواصل اجتماعي حديثة — مصممة لتكون مشروع حقيقي وليس مجرد تجربة  
-> 🔥 Built with vision, not just code
+> ⚡ مشروع لبناء منصة تواصل اجتماعي حقيقية من السودان إلى العالم  
+> 🔥 ليس مجرد موقع… بل بداية Startup
 
 ---
 
-## 🧠 الرؤية (Vision)
+## 📌 Table of Contents
 
-بناء منصة تواصل اجتماعي:
-- 🌍 تبدأ من السودان
-- 🚀 تصل للعالم
-- 🧠 تعتمد على الذكاء والتجربة
-- ⚡ تقدم أداء عالي بدون تعقيد
+- About
+- Vision
+- Features
+- Tech Stack
+- Architecture
+- Roadmap
+- Growth Plan
+- Run Project
+- Contribution
 
 ---
 
-## 👨‍💻 عن المطور
+## 👨‍💻 About Me
 
 أنا **محمود عبدالله**  
-🎓 طالب في **جامعة النيل الأبيض – السودان**  
-💻 تخصص: **تقانة المعلومات (Information Technology)**  
+🎓 جامعة النيل الأبيض – السودان  
+💻 تقانة المعلومات  
 
-🧠 مهاراتي:
-- تطوير الويب (Frontend + Backend Basics)
-- تصميم واجهات حديثة (UI/UX)
-- التعامل مع قواعد البيانات
-- استخدام الذكاء الاصطناعي في التطوير
-
-🎯 هدفي:
-> تحويل الأفكار إلى منتجات حقيقية قابلة للنمو
+🧠 مهتم بـ:
+- Web Development  
+- AI Integration  
+- Startup Building  
 
 ---
 
-## 💡 فكرة المشروع
+## 🌍 Vision
 
-**HOota Social** هو تطبيق تواصل اجتماعي حديث يهدف إلى:
-
-- تبسيط تجربة المستخدم
-- تقديم أداء سريع جدًا
-- توفير تصميم جذاب
-- تقليل التعقيد الموجود في المنصات الحالية
+> بناء منصة تواصل حديثة:
+- سريعة ⚡  
+- بسيطة 🎯  
+- عالمية 🌍  
 
 ---
 
-## ⚡ لماذا هذا المشروع مختلف؟
+## ✨ Features
+
+- 🎨 Glassmorphism UI  
+- ⚡ Ultra Fast  
+- 🔐 Auth System  
+- 📱 Responsive  
+- 🌙 Dark Mode  
+
+---
+
+## 🧠 Philosophy
+
+> “Build Products, Not Just Projects”
+
+- ❌ No Frameworks  
+- ⚡ Pure JavaScript  
+- 🧠 Clean Code  
+- 🔥 Full Control  
+
+---
+
+## 🛠️ Tech Stack
+
+- HTML5  
+- CSS3  
+- JavaScript  
+- Supabase  
+- PostgreSQL  
+
+---
+
+## 🧩 Architecture
 
 ```diff
-+ 🚫 بدون Frameworks (React / Vue)
-+ ⚡ سرعة تحميل عالية جدًا
-+ 🧠 كود نظيف ومفهوم
-+ 🎨 تصميم مستقبلي (2026 UI)
-+ 🔐 أمان باستخدام Supabase
+Frontend → Vanilla JS SPA  
+Backend → Supabase  
+Database → PostgreSQL  
+Auth → Supabase Auth  
